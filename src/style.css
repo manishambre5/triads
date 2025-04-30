@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme {
+  --animate-shake: shake 0.5s ease-in-out;
+  --animate-exist: exist 0.3s ease both;
+
+  @keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    20%, 60% {
+        transform: translateX(-5px);
+    }
+    40%, 80% {
+        transform: translateX(5px);
+    }
+  }
+
+  @keyframes exist {
+    0% {
+      opacity: 0;
+      transform: scale(0%);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(100%);
+    }
+  }
+}
+
+@layer base {
+  .word {
+    @apply border-4 border-gray-200 rounded-xl p-2 h-20 min-w-32 text-xl cursor-pointer;
+    @variant hover {
+      @apply bg-gray-200 transition-colors duration-200;
+    }
+  }
+  .word.selected {
+    @apply bg-gray-200;
+  }
+  .word:disabled {
+    @apply cursor-default opacity-25 scale-95 pointer-events-none;
+  }
+}
