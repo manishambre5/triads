@@ -75,12 +75,12 @@ function updateFoundTriads(foundTriad) {
 // Initial render...
 function renderPuzzlePage() {
   document.querySelector('#app').innerHTML = `
-    <main class="relative w-dvw h-dvh bg-white flex flex-col items-center justify-center gap-7">
+    <main class="relative w-dvw h-dvh bg-white flex flex-col items-center justify-center gap-7 font-primary">
       <section class="congrats hidden flex flex-col gap-4 items-center justify-center p-10 shadow-2xl bg-white animate-exist z-10">
         <h2 class="text-5xl font-bold">You did it!</h2>
         <p>Refresh for a new puzzle!</p>
       </section>
-      <h1 class="text-7xl">Triads</h1>
+      <h1 class="text-7xl font-triad">Triads</h1>
       <h3>Create three groups of three!</h3>
       <section class="flex flex-col gap-2 items-center">
         <section class="triads hidden min-w-100 flex-col gap-2 items-center justify-center"></section>
