@@ -1,29 +1,29 @@
-import { puzzleWords } from './main.js';
+
 
 let mistakesLeft = 4;
 
-export function mistakesCounter() {
+export function mistakesCounter(puzzleWords) {
   if (mistakesLeft > 0) {
     mistakesLeft--;
     updateMistakesLeft();
   }
   if (mistakesLeft === 0) {
     console.log("Game Over");
-    solvePuzzle();
+    solvePuzzle(puzzleWords);
   }
 }
 
 function updateMistakesLeft() {
   const mistakesSpan = document.getElementById('counter');
-  mistakesSpan.textContent = '❌ '.repeat(mistakesLeft);
+  mistakesSpan.textContent = 'close'.repeat(mistakesLeft);
 }
 
-function solvePuzzle() {
+function solvePuzzle(puzzleWords) {
   const solution = document.querySelector('.triads');
-  document.querySelector('.mistakes').innerHTML = ``;
   document.querySelector('.wordgrid').innerHTML = ``;
+  document.querySelector('.mistakes').classList.add('text-transparent');
   document.querySelector('.buttons').innerHTML = `
-    <p>Refresh for a new puzzle!</p>
+    <p class='py-3'>Refresh for a new puzzle!</p>
   `;
 
   if (solution) {

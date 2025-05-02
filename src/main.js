@@ -1,22 +1,9 @@
 import './style.css'
 import { mistakesCounter } from './counter.js'
+import { triads } from './words.js';
 
-const dictionary = [
-  {
-    "connection": "Chris ___",
-    "words": ["Evans","Hemsworth","Pratt"]
-  },
-  {
-    "connection": "Pizza Toppings",
-    "words": ["Pepperoni","Mushrooms","Pineapple"]
-  },
-  {
-    "connection": "Jupiter's Moons",
-    "words": ["Ganymede","Europa","Io"]
-  },
-];
 
-// Fisher-Yates algorithm to shuffle the array...
+// Fisher-Yates algorithm to shuffle array...
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -25,26 +12,27 @@ function shuffleArray(array) {
   return array;
 }
 
-// Combining the words with their connection index into a single array...
-export const puzzleWords = dictionary.flatMap((item, connectionIndex) => 
-  item.words.map(word => ({ word:word, connection:item.connection, connectionIndex })));
+// Shuffling triads array before generating the puzzle...
+const shuffledWords = shuffleArray([...triads]).slice(0,3);
 
-// Shuffling the puzzleWords elements...
-let shuffledWords = shuffleArray([...puzzleWords]);
+// Flattening the array and adding a connectionIndex into a single array for the puzzle...
+let puzzleWords = shuffleArray(shuffledWords.flatMap((item, connectionIndex) => 
+  item.words.map(word => ({ word:word, connection:item.connection, connectionIndex }))));
+console.log(puzzleWords);
 
 renderPuzzlePage();
 
 // For rendering the Puzzle...
-function renderPuzzle(shuffledWords) {
-  return shuffledWords.map(({word}) => `
+function renderPuzzle(puzzleWords) {
+  return puzzleWords.map(({word}) => `
     <button data-word="${word}" class="word">${word}</button>
   `).join('');
 }
 
 // For DOM updates after every correct triad submission...
-function updatePuzzleGrid(shuffledWords) {
+function updatePuzzleGrid(puzzleWords) {
   const grid = document.querySelector('.wordgrid');
-  if (grid) grid.innerHTML = renderPuzzle(shuffledWords);
+  if (grid) grid.innerHTML = renderPuzzle(puzzleWords);
 }
 
 function updateFoundTriads(foundTriad) {
@@ -75,20 +63,23 @@ function updateFoundTriads(foundTriad) {
 // Initial render...
 function renderPuzzlePage() {
   document.querySelector('#app').innerHTML = `
-    <main class="relative w-dvw h-dvh bg-white flex flex-col items-center justify-center gap-7 font-primary">
+    <main class="p-2 relative w-dvw h-dvh bg-white flex flex-col items-center justify-center gap-4 font-primary">
       <section class="congrats hidden flex flex-col gap-4 items-center justify-center p-10 shadow-2xl bg-white animate-exist z-10">
         <h2 class="text-5xl font-bold">You did it!</h2>
         <p>Refresh for a new puzzle!</p>
       </section>
-      <h1 class="text-7xl font-triad">Triads</h1>
-      <h3>Create three groups of three!</h3>
-      <section class="flex flex-col gap-2 items-center">
-        <section class="triads hidden min-w-100 flex-col gap-2 items-center justify-center"></section>
-        <section class="wordgrid grid grid-cols-3 gap-2 text-center">
-          ${renderPuzzle(shuffledWords)}
+      <header class="p-4">
+        <h1 class="text-7xl font-triad">Triads</h1>
+        <h3 class="">Create three groups of three!</h3>
+      </header>
+      <section class="h-3/4 min-w-sm flex flex-col gap-4 items-center">
+        <section class="triads hidden w-full flex-col gap-2 items-center justify-center"></section>
+        <section class="wordgrid w-full grid grid-cols-3 gap-2 text-center">
+          ${renderPuzzle(puzzleWords)}
         </section>
-        <section class="mistakes p-1">
-          <span>Mistakes Remaining: </span><span id="counter"></span>
+        <section class="mistakes w-full flex flex-col items-center">
+          <span id="counter" class="material-symbols-outlined"></span>
+          <span>Mistakes Remaining</span>
         </section>
         <section class="buttons flex gap-2">
           <button id="shuffle" class="py-3 px-5 rounded-xl uppercase border-1 border-black cursor-pointer hover:underline transition-all">Shuffle</button>
@@ -98,10 +89,9 @@ function renderPuzzlePage() {
     </main>
   `;
   document.getElementById('shuffle').addEventListener('click', () => {
-    updatePuzzleGrid(shuffleArray([...shuffledWords]));
+    updatePuzzleGrid(shuffleArray([...puzzleWords]));
   });
   document.getElementById('submit').addEventListener('click', checkTriad);
-  console.log(puzzleWords);
 }
 
 // Allowing maximum of 3 words to be selected
@@ -141,30 +131,24 @@ function checkTriad() {
   
   if (selectedButtons.length === 3) {
     if (allSameConnection) {
-      //const connectionIndex = connectionIndices[0];
-      //console.log(`Correct! All words belong to: ${dictionary[connectionIndex].connection}`);
-
-      //selectedButtons.forEach(button => {
-        //button.disabled = true;
-        //button.classList.remove('selected');
-      //});
-
-      // Remove selected words from shuffledWords
-      let foundTriad = shuffledWords.filter(wordObj => 
+      // Remove selected words from puzzleWords
+      let foundTriad = puzzleWords.filter(wordObj => 
         submittedWords.includes(wordObj.word)
       );
-      shuffledWords = shuffledWords.filter(wordObj => 
+      puzzleWords = puzzleWords.filter(wordObj => 
         !submittedWords.includes(wordObj.word)
       );
 
-      //console.log(shuffledWords);
-      if(shuffledWords.length === 0) {
+      //console.log(puzzleWords);
+      if(puzzleWords.length === 0) {
         console.log("Well Done!");
-        document.querySelector('.wordgrid').classList.replace('grid','hidden');
-        document.querySelector('.congrats').classList.replace('hidden','absolute');
+        setTimeout(() => {
+          document.querySelector('.wordgrid').classList.replace('grid','hidden');
+          document.querySelector('.congrats').classList.replace('hidden','absolute');
+        }, 500);
       }
       updateFoundTriads(foundTriad);
-      updatePuzzleGrid(shuffledWords);
+      updatePuzzleGrid(puzzleWords);
       return true;
     } else {
       // trigger animation to indicate wrong answer...
@@ -175,7 +159,7 @@ function checkTriad() {
       // clear selection...
       selectedButtons.forEach(button => button.classList.remove('selected'));
       //console.log("These words aren't related.");
-      mistakesCounter();
+      mistakesCounter(puzzleWords);
       return false;
     }
   } else {
@@ -191,5 +175,4 @@ function checkTriad() {
   }
 }
 
-
-mistakesCounter();
+mistakesCounter(puzzleWords);
