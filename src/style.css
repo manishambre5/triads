@@ -33,15 +33,12 @@
 
 @layer base {
   .word {
-    @apply border-4 border-gray-200 rounded-xl p-2 h-20 min-w-32 text-xl cursor-pointer;
+    @apply uppercase font-bold bg-stone-200 rounded-lg p-2 h-24 text-base sm:text-lg cursor-pointer;
     @variant hover {
-      @apply bg-gray-200 transition-colors duration-200;
+      @apply bg-stone-300 transition-colors duration-300;
     }
   }
   .word.selected {
-    @apply bg-gray-200;
-  }
-  .word:disabled {
-    @apply cursor-default opacity-25 scale-95 pointer-events-none;
+    @apply text-white bg-stone-500;
   }
 }

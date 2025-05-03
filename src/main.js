@@ -45,7 +45,7 @@ function updateFoundTriads(foundTriad) {
     existingDivs.forEach(div => div.classList.remove('animate-exist'));
 
     row.innerHTML += `
-      <div class="flex flex-col items-center justify-center rounded-xl p-2 h-20 w-full text-xl border-4 animate-exist
+      <div class="flex flex-col items-center justify-center rounded-xl p-2 h-24 w-full text-xl border-4 animate-exist
         ${
           foundTriad[0].connectionIndex === 0 ? 'bg-amber-200 border-amber-200' :
           foundTriad[0].connectionIndex === 1 ? 'bg-rose-200 border-rose-200' :
@@ -63,19 +63,21 @@ function updateFoundTriads(foundTriad) {
 // Initial render...
 function renderPuzzlePage() {
   document.querySelector('#app').innerHTML = `
-    <main class="p-2 relative w-dvw h-dvh bg-white flex flex-col items-center justify-center gap-4 font-primary">
-      <section class="congrats hidden flex flex-col gap-4 items-center justify-center p-10 shadow-2xl bg-white animate-exist z-10">
-        <h2 class="text-5xl font-bold">You did it!</h2>
-        <p>Refresh for a new puzzle!</p>
-      </section>
-      <header class="p-4">
+    <main class="relative w-dvw h-dvh bg-white flex flex-col items-center justify-center gap-2 font-primary">
+      <header class="p-4 flex flex-col items-center">
         <h1 class="text-7xl font-triad">Triads</h1>
         <h3 class="">Create three groups of three!</h3>
       </header>
-      <section class="h-3/4 min-w-sm flex flex-col gap-4 items-center">
-        <section class="triads hidden w-full flex-col gap-2 items-center justify-center"></section>
-        <section class="wordgrid w-full grid grid-cols-3 gap-2 text-center">
-          ${renderPuzzle(puzzleWords)}
+      <section class="h-2/3 w-full flex flex-col gap-4 items-center">
+        <section class="w-dvw h-full sm:w-md p-2 flex flex-col gap-2 items-center justify-center">
+          <section class="congrats hidden flex flex-col gap-4 items-center justify-center p-10 shadow-2xl bg-white animate-exist z-10">
+            <h2 class="text-5xl font-bold">You did it!</h2>
+            <p>Refresh for a new puzzle!</p>
+          </section>
+          <section class="triads hidden w-full flex-col gap-2 items-center justify-center"></section>
+          <section class="wordgrid w-full grid grid-cols-3 gap-2 text-center">
+            ${renderPuzzle(puzzleWords)}
+          </section>
         </section>
         <section class="mistakes w-full flex flex-col items-center">
           <span id="counter" class="material-symbols-outlined"></span>
@@ -116,6 +118,7 @@ document.querySelector('.wordgrid').addEventListener('click', (e) => {
 
 // Checking whether selected triad is correct...
 function checkTriad() {
+  const puzzleCompleteSound = new Audio('complete.mp3');
   // Getting selected words upon Submit...
   const selectedButtons = Array.from(document.querySelectorAll('.selected'));
   const submittedWords = Array.from(document.querySelectorAll('.selected')).map(button => button.dataset.word);
@@ -142,8 +145,12 @@ function checkTriad() {
       //console.log(puzzleWords);
       if(puzzleWords.length === 0) {
         console.log("Well Done!");
+        document.querySelector('.wordgrid').classList.replace('grid','hidden');
         setTimeout(() => {
-          document.querySelector('.wordgrid').classList.replace('grid','hidden');
+          puzzleCompleteSound.volume = 0.5;
+          puzzleCompleteSound.play().catch((e) => {
+            console.warn('Audio autoplay blocked:', e);
+          });
           document.querySelector('.congrats').classList.replace('hidden','absolute');
         }, 500);
       }
