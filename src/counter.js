@@ -1,5 +1,3 @@
-
-
 let mistakesLeft = 4;
 
 export function mistakesCounter(puzzleWords) {
@@ -16,14 +14,23 @@ export function mistakesCounter(puzzleWords) {
 function updateMistakesLeft() {
   const mistakesSpan = document.getElementById('counter');
   mistakesSpan.textContent = 'close'.repeat(mistakesLeft);
+  if (mistakesLeft === 1) {
+    // trigger animation to indicate only one chance left...
+    document.getElementById('counter').classList.add('animate-bounce');
+    
+  }
 }
 
 function solvePuzzle(puzzleWords) {
   const solution = document.querySelector('.triads');
   document.querySelector('.wordgrid').innerHTML = ``;
-  document.querySelector('.mistakes').classList.add('text-transparent');
+  document.querySelector('.mistakes').classList.add('hidden');
   document.querySelector('.buttons').innerHTML = `
-    <p class='py-3'>Refresh for a new puzzle!</p>
+    <section class="flex flex-col items-center justify-center gap-4">
+      <span class="material-symbols-outlined scale-200">sentiment_very_dissatisfied</span>
+      <h2 class="text-2xl">Try Again Next Time</h2>
+      <p>Refresh for a new puzzle!</p>
+    </section>
   `;
 
   if (solution) {

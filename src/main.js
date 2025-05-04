@@ -38,7 +38,7 @@ function updatePuzzleGrid(puzzleWords) {
 function updateFoundTriads(foundTriad) {
   const row = document.querySelector('.triads');
   if (row) {
-    row.classList.replace('hidden','flex');
+    row.classList.remove('hidden');
 
     // Remove the 'animate-exist' class from all existing divs
     const existingDivs = row.querySelectorAll('div');
@@ -70,11 +70,13 @@ function renderPuzzlePage() {
       </header>
       <section class="h-2/3 w-full flex flex-col gap-4 items-center">
         <section class="w-dvw h-full sm:w-md p-2 flex flex-col gap-2 items-center justify-center">
-          <section class="congrats hidden flex flex-col gap-4 items-center justify-center p-10 shadow-2xl bg-white animate-exist z-10">
-            <h2 class="text-5xl font-bold">You did it!</h2>
+          <section class="done hidden absolute flex flex-col gap-4 items-center justify-center p-6 pb-12 shadow-2xl bg-white animate-exist z-10">
+            <button id="close-btn" class="material-symbols-outlined self-end text-gray-400 hover:text-black transition-colors duration-300">close</button>
+            <span class="material-symbols-outlined scale-200">sentiment_very_satisfied</span>
+            <h2 class="text-5xl font-bold">Nice work!</h2>
             <p>Refresh for a new puzzle!</p>
           </section>
-          <section class="triads hidden w-full flex-col gap-2 items-center justify-center"></section>
+          <section class="triads hidden w-full flex flex-col gap-2 items-center justify-center"></section>
           <section class="wordgrid w-full grid grid-cols-3 gap-2 text-center">
             ${renderPuzzle(puzzleWords)}
           </section>
@@ -94,6 +96,12 @@ function renderPuzzlePage() {
     updatePuzzleGrid(shuffleArray([...puzzleWords]));
   });
   document.getElementById('submit').addEventListener('click', checkTriad);
+  document.getElementById('close-btn').addEventListener('click', () => {
+    document.querySelector('.done').classList.add('animate-die');
+    setTimeout(() => {
+      document.querySelector('.done').classList.add('hidden');
+    }, 300);
+  });
 }
 
 // Allowing maximum of 3 words to be selected
@@ -145,14 +153,18 @@ function checkTriad() {
       //console.log(puzzleWords);
       if(puzzleWords.length === 0) {
         console.log("Well Done!");
-        document.querySelector('.wordgrid').classList.replace('grid','hidden');
+        document.querySelector('.wordgrid').classList.add('hidden');
         setTimeout(() => {
           puzzleCompleteSound.volume = 0.5;
           puzzleCompleteSound.play().catch((e) => {
             console.warn('Audio autoplay blocked:', e);
           });
-          document.querySelector('.congrats').classList.replace('hidden','absolute');
-        }, 500);
+          document.querySelector('.done').classList.remove('hidden');
+        }, 300);
+        setTimeout(() => {
+          // removing the 'appear' animation so that 'disappear' animation works
+          document.querySelector('.done').classList.remove('animate-exist');
+        }, 800);
       }
       updateFoundTriads(foundTriad);
       updatePuzzleGrid(puzzleWords);
