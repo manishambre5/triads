@@ -18,7 +18,8 @@ const shuffledWords = shuffleArray([...triads]).slice(0,3);
 // Flattening the array and adding a connectionIndex into a single array for the puzzle...
 let puzzleWords = shuffleArray(shuffledWords.flatMap((item, connectionIndex) => 
   item.words.map(word => ({ word:word, connection:item.connection, connectionIndex }))));
-console.log(puzzleWords);
+//console.log(puzzleWords);
+//console.log(shuffledWords);
 
 renderPuzzlePage();
 
@@ -178,7 +179,7 @@ function checkTriad() {
       // clear selection...
       selectedButtons.forEach(button => button.classList.remove('selected'));
       //console.log("These words aren't related.");
-      mistakesCounter(puzzleWords);
+      mistakesCounter(shuffledWords);
       return false;
     }
   } else {
@@ -194,4 +195,4 @@ function checkTriad() {
   }
 }
 
-mistakesCounter(puzzleWords);
+mistakesCounter(shuffledWords);

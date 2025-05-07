@@ -1,13 +1,13 @@
 let mistakesLeft = 4;
 
-export function mistakesCounter(puzzleWords) {
+export function mistakesCounter(shuffledWords) {
   if (mistakesLeft > 0) {
     mistakesLeft--;
     updateMistakesLeft();
   }
   if (mistakesLeft === 0) {
     console.log("Game Over");
-    solvePuzzle(puzzleWords);
+    solvePuzzle(shuffledWords);
   }
 }
 
@@ -21,8 +21,11 @@ function updateMistakesLeft() {
   }
 }
 
-function solvePuzzle(puzzleWords) {
+function solvePuzzle(shuffledWords) {
   const solution = document.querySelector('.triads');
+
+  // Cleaning up UI
+  document.querySelector('.triads').innerHTML = ``;
   document.querySelector('.wordgrid').innerHTML = ``;
   document.querySelector('.mistakes').classList.add('hidden');
   document.querySelector('.buttons').innerHTML = `
@@ -33,21 +36,21 @@ function solvePuzzle(puzzleWords) {
     </section>
   `;
 
+  // Revealing puzzle solution
   if (solution) {
     solution.classList.replace('hidden','flex');
-    solution.innerHTML = `
-      <div class="flex flex-col items-center justify-center rounded-xl p-2 h-20 w-full text-xl border-4 animate-exist bg-amber-200 border-amber-200">
-        <div class="font-bold">${puzzleWords[0].connection}</div>
-        <div class="italic">${puzzleWords[0].word}, ${puzzleWords[1].word}, ${puzzleWords[2].word}</div>
-      </div>
-      <div class="flex flex-col items-center justify-center rounded-xl p-2 h-20 w-full text-xl border-4 animate-exist bg-rose-200 border-rose-200">
-        <div class="font-bold">${puzzleWords[3].connection}</div>
-        <div class="italic">${puzzleWords[3].word}, ${puzzleWords[4].word}, ${puzzleWords[5].word}</div>
-      </div>
-      <div class="flex flex-col items-center justify-center rounded-xl p-2 h-20 w-full text-xl border-4 animate-exist bg-emerald-200 border-emerald-200">
-        <div class="font-bold">${puzzleWords[6].connection}</div>
-        <div class="italic">${puzzleWords[6].word}, ${puzzleWords[7].word}, ${puzzleWords[8].word}</div>
-      </div>
-    `;
+    
+    const colors = [
+      'bg-amber-200 border-amber-200',
+      'bg-rose-200 border-rose-200',
+      'bg-emerald-200 border-emerald-200'
+    ];
+    for (let i = 0; i < shuffledWords.length; i++) {
+        solution.innerHTML += `
+        <div class="flex flex-col items-center justify-center rounded-xl p-2 h-20 w-full text-xl border-4 animate-exist ${colors[i]}">
+          <div class="font-bold">${shuffledWords[i].connection}</div>
+          <div class="italic">${shuffledWords[i].words[0]}, ${shuffledWords[i].words[1]}, ${shuffledWords[i].words[2]}</div>
+        </div>`;
+    }
   }
 }
